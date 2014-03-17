@@ -1,4 +1,4 @@
-from __future__ import division
+
 from titlecase import titlecase
 import numpy
 from uuid import uuid1
@@ -118,10 +118,10 @@ function utfDecode(x){
             return outTemp
         elif typeVar in (str, int) or var==None:
             return var
-        elif typeVar==long:
+        elif typeVar==int:
             return int(var)
         else:
-            print typeVar
+            print(typeVar)
             raise TypeError
 
     def addVar(self, **kw):
@@ -139,7 +139,7 @@ function utfDecode(x){
             elif typeOut in (list, dict, int, float) or inputs[i]==None:
                 outTemp+=str(inputs[i])
             else:
-                print typeOut
+                print(typeOut)
                 raise TypeError
             jsInputs.append(outTemp)
         jsInputs='\n'.join(['var '+i+';' for i in jsInputs]).replace("u'", "'")
@@ -162,8 +162,8 @@ function utfDecode(x){
     def pValsStar(self, dataAdd, index=0):
         if len(dataAdd)==0:
             return
-        for i in xrange(len(dataAdd[index])):
-            for j in xrange(len(dataAdd[index][0])):
+        for i in range(len(dataAdd[index])):
+            for j in range(len(dataAdd[index][0])):
                 if type(dataAdd[index][i][j])==str: continue
                 x=dataAdd[index][i][j]
                 if x<0:        dataAdd[index][i][j]='Error'
@@ -174,7 +174,7 @@ function utfDecode(x){
                 else:          dataAdd[index][i][j]='Error'
 
     def addPanel(self, title=''):
-        html=u'''<div class="figtags panel description" style="width: {0}px">{1}</div>'''.format(self.width, title).replace('\n','')
+        html='''<div class="figtags panel description" style="width: {0}px">{1}</div>'''.format(self.width, title).replace('\n','')
         self.addJs(''' $("#{0}").append('{html}');'''.format(self.id, html=html))
         return '-tag-{0}'.format(uuid1())
 
@@ -253,9 +253,9 @@ function utfDecode(x){
                 colorRangeData=data
                 if len(colorDomainAutoIgnoreColumns)+len(colorDomainAutoIgnoreRows)>0:
                     colorRangeData=[]
-                    for i in xrange(len(data)):
+                    for i in range(len(data)):
                         if i in colorDomainAutoIgnoreRows: continue
-                        for j in xrange(len(data[0])):
+                        for j in range(len(data[0])):
                             if j in colorDomainAutoIgnoreColumns: continue
                             colorRangeData.append(data[i][j])
 
@@ -278,7 +278,7 @@ function utfDecode(x){
                 colorDomain=[colorDomain[0], colorDomainMax]
 
             colorRangeLen=len(colorRange)
-            colorDomain=(numpy.array([i/colorRangeLen for i in xrange(colorRangeLen+1)])*(colorDomain[1]-colorDomain[0])+colorDomain[0]).tolist()
+            colorDomain=(numpy.array([i/colorRangeLen for i in range(colorRangeLen+1)])*(colorDomain[1]-colorDomain[0])+colorDomain[0]).tolist()
         else:
             colorDomain=[]
             colorRange=[]
@@ -789,11 +789,11 @@ function utfDecode(x){
         html='\n'.join(html)
 
         if 'keepTemp' not in mode:
-            tempJs=tempfile.NamedTemporaryFile(mode="w+b", delete=False, suffix='.js')
-            temp=tempfile.NamedTemporaryFile(mode="w+b", delete=False, suffix='.htm')
+            tempJs=tempfile.NamedTemporaryFile(mode="w", delete=False, suffix='.js')
+            temp=tempfile.NamedTemporaryFile(mode="w", delete=False, suffix='.htm')
         else:
-            tempJs=open(self.keepTempDir+'//ipyD3_temp.js', "wb")
-            temp=open(self.keepTempDir+'//ipyD3_temp.htm', "wb")
+            tempJs=open(self.keepTempDir+'//ipyD3_temp.js', "w")
+            temp=open(self.keepTempDir+'//ipyD3_temp.htm', "w")
 
         tempJs.write(self.getPhantomJsScript(mode, renderTime))
         temp.write(html)
@@ -821,7 +821,7 @@ function utfDecode(x){
             unlink(tempJs.name)
 
         if 'html' in mode:
-            html=html.replace("&amp;", "&").replace("use href=", "use xlink:href=")
+            html=html.decode('utf-8').replace("&amp;", "&").replace("use href=", "use xlink:href=")
             if 'only' in mode:
                 return html
             if 'file'in mode and fileName!=None:
@@ -834,10 +834,10 @@ function utfDecode(x){
                       html,
                       '</body>',
                       '</html>',]
-                fileOpen=open(fileName,'wb')
+                fileOpen=open(fileName,'w')
                 fileOpen.write('\n'.join(html))
                 fileOpen.close()
-                return True
+                #~ return True
             html='\n'.join(['<style>','\n'.join(self.css),'</style>'])+html
             if 'show'in mode:
                 from IPython.display import HTML
